@@ -177,7 +177,7 @@ public:
     }
     
     Iterator Insert(ConstIterator pos, const Type& item) {
-        //assert(pos);
+        assert(pos >= begin() && pos <= end());
         if (pos == end()){
             PushBack(item);
 			return end() - 1;
@@ -198,7 +198,7 @@ public:
     }
     
     Iterator Insert(ConstIterator pos, Type&& item) {
-        //assert(pos);
+        assert(pos >= begin() && pos <= end());
         if (pos == end()){
             PushBack(std::move(item));
 			return end() - 1;
@@ -219,7 +219,7 @@ public:
     }
     
     Iterator Erase(ConstIterator pos) {
-        assert(pos);
+        assert(pos >= begin() && pos <= end());
         std::move(Iterator(pos) + 1, end(), Iterator(pos));
         --size_;
         return Iterator(pos);
