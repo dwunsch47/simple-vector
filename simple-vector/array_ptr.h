@@ -14,7 +14,7 @@ public:
     explicit ArrayPtr(size_t size) : raw_ptr_(size == 0 ? nullptr : new Type[size]) {}
 
     // Конструктор из сырого указателя, хранящего адрес массива в куче либо nullptr
-    explicit ArrayPtr(Type* raw_ptr) noexcept  : raw_ptr_(raw_ptr) {}
+    explicit ArrayPtr(Type* raw_ptr) noexcept : raw_ptr_(raw_ptr) {}
 
     // Запрещаем копирование
     ArrayPtr(const ArrayPtr&) = delete;
@@ -26,11 +26,11 @@ public:
     // Запрещаем присваивание
     ArrayPtr& operator=(const ArrayPtr&) = delete;
 
-    ArrayPtr(ArrayPtr&& other) : raw_ptr_(std::exchange(other.raw_ptr_, nullptr)) {}
+    ArrayPtr(ArrayPtr&& other) : raw_ptr_(other.Release()) {}
 
     ArrayPtr& operator=(ArrayPtr&& other) {
         if (this != &other) {
-            raw_ptr_ = std::exchange(other.raw_ptr_, nullptr);
+            swap(other);
         }
         return *this;
     }

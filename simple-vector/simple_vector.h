@@ -35,7 +35,7 @@ public:
 
     // Создаёт вектор из size элементов, инициализированных значением по умолчанию
     explicit SimpleVector(size_t size) : items_(size), size_(size), capacity_(size) {
-        std::generate(items_.Get(), items_.Get() + size_, [] { return Type(); });
+        std::generate(begin(), end(), [] { return Type(); });
     }
 
     SimpleVector(ReserveProxyObj other) {
@@ -118,35 +118,19 @@ public:
     // Изменяет размер массива.
     // При увеличении размера новые элементы получают значение по умолчанию для типа Type
     void Resize(size_t new_size) {
-        if (new_size == capacity_) {
+        if (new_size > capacity_) {
+            Reserve(std::max(new_size, (capacity_ * 2)));
             std::generate(end(), begin() + new_size, [] {return Type{}; });
-        }
-        else if (new_size > capacity_) {
-            Reserve(std::max(new_size, (capacity_ * 2))); //получается, даже generate не нужен, т.к. конструктор в Reserve и так все заполнил
         }
         size_ = new_size;
     }
 
     void PushBack(const Type& item) {
-        if (size_ == capacity_) {
-            Reserve(capacity_ == 0 ? 10 : capacity_ * 2);
-            items_[size_] = item;
-        }
-        else {
-            items_[size_] = item;
-        }
-        ++size_;
+        *(PreInsert(end())) = item;
     }
 
     void PushBack(Type&& item) {
-        if (size_ == capacity_) {
-            Reserve(capacity_ == 0 ? 10 : capacity_ * 2);
-            items_[size_] = std::move(item);
-        }
-        else {
-            items_[size_] = std::move(item);
-        }
-        ++size_;
+        *(PreInsert(end())) = std::move(item);
     }
 
     void PopBack() noexcept {
@@ -156,17 +140,15 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, const Type& item) {
-        assert(pos >= begin() && pos <= end());
-        size_t new_pos = PreInsert(pos);
-        items_[new_pos] = item;
-        return &items_[new_pos];
+        Iterator new_pos = PreInsert(pos);
+        *new_pos = item;
+        return new_pos;
     }
 
     Iterator Insert(ConstIterator pos, Type&& item) {
-        assert(pos >= begin() && pos <= end());
-        size_t new_pos = PreInsert(pos);
-        items_[new_pos] = std::move(item);
-        return &items_[new_pos];
+        Iterator new_pos = PreInsert(pos);
+        *new_pos = std::move(item);
+        return new_pos;
     }
 
     Iterator Erase(ConstIterator pos) {
@@ -192,7 +174,6 @@ public:
     void Reserve(size_t new_capacity) {
         if (new_capacity > capacity_) {
             ArrayPtr<Type> tmp(new_capacity);
-            std::generate(tmp.Get(), tmp.Get() + new_capacity, [] { return Type{}; });
             std::move(begin(), end(), tmp.Get());
             items_.swap(tmp);
             capacity_ = new_capacity;
@@ -240,22 +221,24 @@ private:
     size_t size_ = 0;
     size_t capacity_ = 0;
 
-    size_t PreInsert(ConstIterator pos) {
-        size_t number_pos = std::distance(cbegin(), pos);
-        if (size_ < capacity_) {
-            std::move_backward(&items_[number_pos], end(), &items_[size_ + 1]);
+    Iterator PreInsert(ConstIterator pos) {
+        assert(pos >= begin() && pos <= end());
+        Iterator result = (Iterator)pos;
+        if (pos == end()) {
+            if (size_ == capacity_) {
+                Reserve(std::max(static_cast<size_t>(1), (capacity_ * 2)));
+            }
+            result = end();
+        }
+        else if (size_ < capacity_) {
+            std::move_backward((Iterator)pos, end(), end() + 1);
         }
         else {
-            if (capacity_ == 0) {
-                Reserve(1);
-            }
-            else {
-                Reserve(capacity_ * 2);
-                std::move_backward(&items_[number_pos], end(), &items_[size_ + 1]);
-            }
+            result = std::move_backward((Iterator)pos, end(), end() + 1);
+            --result;
         }
         ++size_;
-        return number_pos;
+        return result;
     }
 };
 
