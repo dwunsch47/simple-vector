@@ -31,4 +31,4 @@ Usage
 ------
 Min. C++ version: C++17
 
-Clone repository use similarly to std::vector
+Clone repository and use similarly to std::vector
