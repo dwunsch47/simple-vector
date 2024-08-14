@@ -33,7 +33,6 @@ public:
         return *this;
     }
 
-    // Создаёт вектор из size элементов, инициализированных значением по умолчанию
     explicit SimpleVector(size_t size) : items_(size), size_(size), capacity_(size) {
         std::generate(begin(), end(), [] { return Type(); });
     }
@@ -42,7 +41,6 @@ public:
         Reserve(other.capacity_to_reserve_);
     }
 
-    // Создаёт вектор из size элементов, инициализированных значением value
     SimpleVector(size_t size, const Type& value) : items_(size), size_(size), capacity_(size) {
         if (size == 0) {
             return;
@@ -50,7 +48,6 @@ public:
         std::fill(begin(), end(), value);
     }
 
-    // Создаёт вектор из std::initializer_list
     SimpleVector(std::initializer_list<Type> init) : items_(init.size()), size_(init.size()), capacity_(init.size()) {
         std::copy(init.begin(), init.end(), items_.Get());
     }
@@ -67,33 +64,26 @@ public:
         return *this;
     }
 
-    // Возвращает количество элементов в массиве
     size_t GetSize() const noexcept {
         return size_;
     }
 
-    // Возвращает вместимость массива
     size_t GetCapacity() const noexcept {
         return capacity_;
     }
 
-    // Сообщает, пустой ли массив
     bool IsEmpty() const noexcept {
         return (size_ == 0 ? true : false);
     }
 
-    // Возвращает ссылку на элемент с индексом index
     Type& operator[](size_t index) noexcept {
         return items_[index];
     }
 
-    // Возвращает константную ссылку на элемент с индексом index
     const Type& operator[](size_t index) const noexcept {
         return items_[index];
     }
 
-    // Возвращает константную ссылку на элемент с индексом index
-    // Выбрасывает исключение std::out_of_range, если index >= size
     Type& At(size_t index) {
         if (index >= size_) {
             throw std::out_of_range("Index out of range of vector");
@@ -101,8 +91,6 @@ public:
         return items_[index];
     }
 
-    // Возвращает константную ссылку на элемент с индексом index
-    // Выбрасывает исключение std::out_of_range, если index >= size
     const Type& At(size_t index) const {
         if (index >= size_) {
             throw std::out_of_range("Index out of range of vector");
@@ -110,13 +98,10 @@ public:
         return items_[index];
     }
 
-    // Обнуляет размер массива, не изменяя его вместимость
     void Clear() noexcept {
         size_ = 0;
     }
 
-    // Изменяет размер массива.
-    // При увеличении размера новые элементы получают значение по умолчанию для типа Type
     void Resize(size_t new_size) {
         if (new_size > capacity_) {
             Reserve(std::max(new_size, (capacity_ * 2)));
@@ -182,38 +167,26 @@ public:
         }
     }
 
-    // Возвращает итератор на начало массива
-    // Для пустого массива может быть равен (или не равен) nullptr
     Iterator begin() noexcept {
         return items_.Get();
     }
 
-    // Возвращает итератор на элемент, следующий за последним
-    // Для пустого массива может быть равен (или не равен) nullptr
     Iterator end() noexcept {
         return items_.Get() + size_;
     }
 
-    // Возвращает константный итератор на начало массива
-    // Для пустого массива может быть равен (или не равен) nullptr
     ConstIterator begin() const noexcept {
         return items_.Get();
     }
 
-    // Возвращает итератор на элемент, следующий за последним
-    // Для пустого массива может быть равен (или не равен) nullptr
     ConstIterator end() const noexcept {
         return items_.Get() + size_;
     }
 
-    // Возвращает константный итератор на начало массива
-    // Для пустого массива может быть равен (или не равен) nullptr
     ConstIterator cbegin() const noexcept {
         return items_.Get();
     }
 
-    // Возвращает итератор на элемент, следующий за последним
-    // Для пустого массива может быть равен (или не равен) nullptr
     ConstIterator cend() const noexcept {
         return items_.Get() + size_;
     }
