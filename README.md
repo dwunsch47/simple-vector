@@ -1,11 +1,9 @@
 Simple Vector
 -------------
-
 Simple vector, similar to std::vector, made for educational purpose
 
 Features
 --------
-
 - Inbuilt implementation of pointer array for internal use
 - Seven constructors
 	- Default
@@ -28,3 +26,9 @@ Features
 - swap() for swaping contents of two SimpleVectors
 - begin() and end() const/non-const iterators
 - Private function PreInsert() with main Insert() logic
+
+Usage
+------
+Min. C++ version: C++17
+
+Clone repository use similarly to std::vector
