@@ -1,10 +1,10 @@
 Simple Vector
 -------------
-Simple vector, similar to std::vector, made for educational purpose
+Simple RAII-style wrapper around self-made pointer array, similar to std::vector
 
 Features
 --------
-- Inbuilt implementation of pointer array for internal use
+- Inbuilt implementation of pointer array
 - Seven constructors
 	- Default
 	- Default with desired size
